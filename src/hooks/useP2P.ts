@@ -495,9 +495,20 @@ export function useP2P(roomName: string, roomPass: string, nickname: string) {
             peer.destroy();
             currentIndex++;
             setTimeout(attemptRegister, 100);
+          } else if (err.type === 'disconnected' || err.type === 'network' || err.type === 'socket-error' || err.type === 'socket-closed') {
+            addLog(`Signaling link offline: ${err.message}. Retrying connection...`, 'warn');
+            if (active && !peer.destroyed) {
+              try { peer.reconnect(); } catch (e) {}
+            }
           } else {
-            addLog(`Signaling framework crash: ${err.message}`, 'error');
-            soundManager.playAlert();
+            addLog(`Signaling link warning: ${err.message}`, 'warn');
+          }
+        });
+
+        peer.on('disconnected', () => {
+          addLog('Connection to signaling gateway lost. Retrying com-link reconnection...', 'warn');
+          if (active && !peer.destroyed) {
+            try { peer.reconnect(); } catch (e) {}
           }
         });
 
