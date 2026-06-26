@@ -465,11 +465,30 @@ export function useP2P(roomName: string, roomPass: string, nickname: string) {
         addLog(`Registering socket node: ${registrationId}...`, 'info');
         
         const peer = new Peer(registrationId, {
-          debug: 1, // Only log errors
+          debug: 1,
           config: {
             iceServers: [
               { urls: 'stun:stun.l.google.com:19302' },
-              { urls: 'stun:stun1.l.google.com:19302' }
+              { urls: 'stun:stun1.l.google.com:19302' },
+              { urls: 'stun:stun2.l.google.com:19302' },
+              { urls: 'stun:stun3.l.google.com:19302' },
+              // TURN servers to traverse strict firewalls, routers, and cellular carriers
+              { urls: 'stun:openrelay.metered.ca:80' },
+              { 
+                urls: 'turn:openrelay.metered.ca:80',
+                username: 'openrelayproject',
+                credential: 'openrelayproject'
+              },
+              { 
+                urls: 'turn:openrelay.metered.ca:443',
+                username: 'openrelayproject',
+                credential: 'openrelayproject'
+              },
+              { 
+                urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+                username: 'openrelayproject',
+                credential: 'openrelayproject'
+              }
             ]
           }
         });
